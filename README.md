@@ -8,7 +8,11 @@ This repository contains a comprehensive pipeline for detecting and decoding ArU
 ```text
 CV_Large_Assignment/
 ├── data/                       # Contains images and ground truth CSVs
-│   └── val/                    
+│   ├──train/                   # "train" and "val" is splitted from the original "train" folder from Kaggle dataset
+│   ├──val/
+│   ├──test/
+│   ├── train.csv
+│   └── val.csv
 ├── models/                     # Core detection algorithms
 │   ├── __init__.py
 │   ├── ClassicAruco.py         # Traditional CV approach
@@ -49,38 +53,48 @@ To use the `HybridAruco` detector, ensure your YOLO weights file (`det_luma_bnc_
 
 ## Usage
 
-### 1. Quick Start & Visualization (`demo.py`)
+### 1. Quick start (`demo.py`)
 
-To test both the Classic and Hybrid models on a single image and view a side-by-side comparison:
-
-```bash
-python demo.py
-
-```
-
-*Note: Press the `ESC` key to close the visualization window.*
-
-### 2. Batch Processing a Dataset
-
-You can easily import and run the models on entire directories to generate prediction CSVs.
+A guide on how to use both the Classic and Hybrid models on an image or on a dataset :
 
 ```python
+import cv2
+import os
 from models.ClassicAruco import ClassicAruco
 from models.HybridAruco import HybridAruco
 
-# Run Classic Detector
-classic = ClassicAruco(max_error=4)
-classic.detect_dataset(image_dir="data/val", output_csv="predictions_classic.csv")
 
-# Run Hybrid Detector
-hybrid = HybridAruco(model_path="weight/det_luma_bnc_s.pt", max_error=4)
-hybrid.detect_dataset(image_dir="data/val", output_csv="predictions_hybrid.csv")
 
+if __name__ == "__main__":
+    
+    TEST_IMAGE = "data/val/000000001171.jpg" 
+    DATA_DIR = "data/val"
+    YOLO_MODEL_PATH = "weight/det_luma_bnc_s.pt" 
+
+
+    classic_detector = ClassicAruco(
+        max_error=4
+    )
+
+    classic_preds = classic_detector.detect(TEST_IMAGE)
+    print(f"Classic found {len(classic_preds)} markers")
+    classic_detector.detect_dataset(DATA_DIR, "predictions_classic.csv")
+
+    hybrid_detector = HybridAruco(
+        model_path=YOLO_MODEL_PATH,
+        max_error=4,
+        conf_thresh=0.15,
+        iou_thresh=0.5
+    )
+
+    hybrid_preds = hybrid_detector.detect(TEST_IMAGE)
+    print(f"Hybrid found {len(hybrid_preds)} markers")
+    hybrid_detector.detect_dataset(DATA_DIR, "predictions_hybrid.csv")
 ```
 
-### 3. Evaluation (`evaluate.py`)
+### 2. Evaluation (`evaluate.py`)
 
-Evaluate your model's predictions against a ground truth CSV. The script calculates a final score based on detection accuracy and heavily penalizes spam/false positives.
+Evaluate your model's predictions against a ground truth CSV. The script calculates a final score based on the metric describe on Kaggle's competition 
 
 Run the evaluation from the command line using arguments:
 
@@ -94,7 +108,7 @@ python evaluate.py --data_type val --model_type classic
 ```
 
 **Visualizing Failures:**
-To inspect where the model failed, uncomment `evaluator.visualize_failures(...)` at the bottom of `evaluate.py`. It displays a side-by-side view of the Ground Truth vs. Prediction for images that scored below a specific threshold.
+To inspect where the model failed, uncomment `evaluator.visualize_failures(...)` at the bottom of `evaluate.py`. It displays a side-by-side view of the Ground Truth vs. Prediction for images that scored between specific thresholds.
 
 ---
 
