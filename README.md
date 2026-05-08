@@ -126,6 +126,3 @@ Both pipelines utilize pre-processing to stabilize edge detection in poor lighti
 * **ClassicAruco:** Iterates over the entire image using a sliding window for `cv2.adaptiveThreshold`. It is highly robust but computationally heavier as it tests every potential square contour.
 * **HybridAruco:** Relies on YOLO to establish a contextual Region of Interest (ROI) with a slight pixel padding. It runs the extensive adaptive thresholding loops *only* within these ROIs, significantly reducing false positives and processing time while handling complex backgrounds.
 
-```
-
-```
