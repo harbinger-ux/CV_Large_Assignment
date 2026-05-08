@@ -1,16 +1,7 @@
-```markdown
 # Robust ArUco Marker Detection: Classic & Hybrid Approaches
 
 This repository contains a comprehensive pipeline for detecting and decoding ArUco markers (specifically `DICT_ARUCO_MIP_36H12`). It features two distinct detection methodologies designed to handle varying lighting conditions and image degradations, originally developed as a Computer Vision Large Assignment.
 
-## Features
-
-* **Classic ArUco Pipeline:** A purely algorithmic approach utilizing adaptive thresholding, contour extraction, and perspective warping, enhanced with dynamic Gamma and Flat-Field corrections for uneven illumination.
-* **Hybrid ArUco Pipeline:** A two-stage architecture using a YOLO-based deep learning model to accurately propose marker bounding boxes, followed by classic geometric refinement and dictionary matching.
-* **Custom Evaluation Engine:** A rigorous scoring metric that penalizes false positives (spam) and rewards sub-pixel accuracy using Gaussian distance modeling.
-* **Built-in Visualization:** Scripts to easily visualize detections side-by-side or inspect failed predictions during evaluation.
-
----
 
 ## Repository Structure
 
